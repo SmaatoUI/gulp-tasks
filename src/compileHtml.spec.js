@@ -25,13 +25,13 @@ describe('compileHtml method', () => {
 
     it('throws errors when it contains falsy paths', () => {
       expect(() => {
-        return compileHtml({
+        compileHtml({
           dst: false,
         });
       }).toThrow();
 
       expect(() => {
-        return compileHtml({
+        compileHtml({
           src: false,
         });
       }).toThrow();

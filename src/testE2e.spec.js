@@ -28,25 +28,25 @@ describe('testE2e method', () => {
 
     it('throws errors when it contains falsy paths and objects', () => {
       expect(() => {
-        return testE2e({
+        testE2e({
           dir: false,
         });
       }).toThrow();
 
       expect(() => {
-        return testE2e({
+        testE2e({
           src: false,
         });
       }).toThrow();
 
       expect(() => {
-        return testE2e({
+        testE2e({
           dst: false,
         });
       }).toThrow();
 
       expect(() => {
-        return testE2e({
+        testE2e({
           connect: false,
         });
       }).toThrow();

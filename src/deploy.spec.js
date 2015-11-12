@@ -4,7 +4,9 @@ const deploy = require('../index').deploy;
 describe('deploy method', () => {
   it('returns a config and a task', () => {
     const result = deploy({
-      bucketEnv: 'BUCKET',
+      bucketName: '-',
+      accessKeyId: '-',
+      secretAccessKey: '-',
     });
     expect(result).toEqual({
       config: jasmine.any(Object),
@@ -15,27 +17,55 @@ describe('deploy method', () => {
   describe('configuration', () => {
     it('has defaults', () => {
       const result = deploy({
-        bucketEnv: 'BUCKET',
+        bucketName: '-',
+        accessKeyId: '-',
+        secretAccessKey: '-',
       });
       expect(result.config).toEqual({
         src: './dist/**/*.*',
-        bucketEnv: 'BUCKET',
+        bucketName: '-',
+        accessKeyId: '-',
+        secretAccessKey: '-',
       });
     });
 
     it('throws errors when it contains falsy paths', () => {
       expect(() => {
-        return deploy({
+        deploy({
           src: false,
-          bucketEnv: 'BUCKET',
+          bucketName: '-',
+          accessKeyId: '-',
+          secretAccessKey: '-',
         });
       }).toThrow();
     });
 
-    it('throws errors when it doesn\'t contain a bucket', () => {
+    it('throws errors when it doesn\'t contain a bucket name', () => {
       expect(() => {
-        return deploy({
+        deploy({
           src: '/',
+          accessKeyId: '-',
+          secretAccessKey: '-',
+        });
+      }).toThrow();
+    });
+
+    it('throws errors when it doesn\'t contain an access key ID', () => {
+      expect(() => {
+        deploy({
+          src: '/',
+          bucketName: '-',
+          secretAccessKey: '-',
+        });
+      }).toThrow();
+    });
+
+    it('throws errors when it doesn\'t contain a secret access key', () => {
+      expect(() => {
+        deploy({
+          src: '/',
+          bucketName: '-',
+          accessKeyId: '-',
         });
       }).toThrow();
     });

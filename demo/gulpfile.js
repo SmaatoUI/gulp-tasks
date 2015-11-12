@@ -41,7 +41,7 @@ const STYLES_DST = `${DISTRIBUTION_DIR}/css`;
 
 gulp.task('demoCopyAssets', gulpTasks.copy({
   src: ASSETS_SRC,
-  dst: './dist/assets',
+  dst: `${DISTRIBUTION_DIR}/assets`,
 }).task);
 
 /**
@@ -49,7 +49,7 @@ gulp.task('demoCopyAssets', gulpTasks.copy({
  */
 
 gulp.task('demoCompileJsAndWatch', gulpTasks.compileJs({
-  src: './src/index.js',
+  src: `${SOURCE_DIR}/index.js`,
   dst: SCRIPTS_DST,
   watch: true,
 }).task);
@@ -105,7 +105,7 @@ gulp.task('demoServe', gulpTasks.serve({
  */
 
 gulp.task('demoLintJs', gulpTasks.lintJs({
-  src: './src/**/*.js',
+  src: `${SOURCE_DIR}/**/*.js`,
 }).task);
 
 /**
@@ -137,11 +137,12 @@ gulp.task('demoTestE2e', gulpTasks.testE2e({
  * Deploy to AWS.
  */
 
-// TODO: Create a bucket for testing deployment with this repo.
-// gulp.task('demoDeploy', gulpTasks.deploy({
-//   src: './dist/**/*.*',
-//   bucketEnv: 'AWS_BUCKET_BUYER_TOOLS',
-// }).task);
+gulp.task('demoDeploy', gulpTasks.deploy({
+  src: `${DISTRIBUTION_DIR}/**/*.*`,
+  bucketName: 'smt-gulp-tasks-test',
+  accessKeyId: process.env.GULP_TASKS_AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.GULP_TASKS_AWS_SECRET_ACCESS_KEY,
+}).task);
 
 /**
  *  Compile everything and start watching for changes.
@@ -161,7 +162,7 @@ gulp.task('demoWatch', [
 
 gulp.task('default', () => {
   // Clean, then start.
-  rimraf('./demo/dist', () => {
+  rimraf(DISTRIBUTION_DIR, () => {
     process.env.NODE_ENV = 'developmentWithHmr';
     gulp.start('demoWatch');
   });
