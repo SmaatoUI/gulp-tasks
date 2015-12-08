@@ -1,3 +1,4 @@
+'use strict';
 
 // Styles are JS module, basically a string of text.
 // dist.css must be build and available before scripts are build.
@@ -13,7 +14,7 @@
 // 3. Browserify sees dist.css changed and rebuilds dist.js
 // 4. JS modules are updated on the client side
 // 5. Inline styles are updated
-import distCss from '../dist/css/dist.css';
+var distCss = require('dist.css');
 
 const styleElelementId = 'dist-css';
 let styleElement = document.getElementById(styleElelementId);

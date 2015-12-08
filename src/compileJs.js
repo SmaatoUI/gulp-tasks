@@ -5,6 +5,8 @@ const browserify = require('browserify');
 const browserifyHmr = require('browserify-hmr');
 const gulp = require('gulp');
 const gulpUtil = require('gulp-util');
+const readFileSync = require('fs').readFileSync;
+const transformTools = require('browserify-transform-tools');
 const vinylSourceStream = require('vinyl-source-stream');
 const watchify = require('watchify');
 
@@ -14,6 +16,7 @@ module.exports = customConfig => {
     dst: './dist/js',
     watch: false,
     hmrPort: 3123,
+    gulpTasksPath: './node_modules/gulp-tasks',
   }, customConfig);
 
   if (!config.src) {
@@ -44,8 +47,36 @@ module.exports = customConfig => {
   }
   browserifyConfig.debug = (process.env.NODE_ENV !== 'production');
 
+  // const css = readFileSync('../demo/dist/css/dist.css').toString('utf8');
+
   // Build bundle with browserify configuration.
   let bundler = browserify(config.src, browserifyConfig);
+  bundler.add('./assets/compileCssHmr', {
+    basedir: `${config.gulpTasksPath}/src`,
+  });
+  bundler.transform(transformTools.makeRequireTransform('hotReloadCss',
+    {evaluateArguments: true},
+    function(args, opts, cb) {
+      if (args[0] === 'dist.css') {
+        return cb(null, `require('../../demo/dist/css/dist.css')`);
+      } else {
+        return cb();
+      }
+    })
+  );
+  // bundler.transform(transformTools.makeStringTransform('hotReloadCss', {
+  //   appliesTo: {
+  //     files: ['./assets/compileCssHmr'],
+  //   },
+  // },
+  //   (content, transformOptions, done) => {
+  //     var file = transformOptions.file;
+  //     console.log('transform', content)
+  //     done(null, content);
+  //     // done(null, content.replace(/blue/g, transformOptions.config.newColor));
+  //   })
+  // );
+
   if (config.watch) {
     bundler.plugin(browserifyHmr, {
       // Start HMR on this port
@@ -57,8 +88,9 @@ module.exports = customConfig => {
   }
   bundler.transform(babelify);
   bundler.transform('browserify-css', {
+    // `autoInject` lets us use browserify to require CSS files in our JS.
     // Disable adding styles to page automatically, since it is harder to
-    // manage with HMR (it was not designed to support it)
+    // manage with HMR (it was not designed to support it).
     autoInject: false,
   });
 
