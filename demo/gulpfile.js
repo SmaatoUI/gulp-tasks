@@ -49,10 +49,11 @@ gulp.task('demoCopyAssets', gulpTasks.copy({
  */
 
 gulp.task('demoCompileJsAndWatch', gulpTasks.compileJs({
-  src: `${SOURCE_DIR}/index-with-styles.js`,
+  src: `${SOURCE_DIR}/index.js`,
   dst: SCRIPTS_DST,
   watch: true,
   hmrPort: 3000,
+  gulpTasksPath: './..',
 }).task);
 
 /**
